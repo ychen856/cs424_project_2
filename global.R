@@ -264,5 +264,7 @@ gen_2010$OTHER_GEN <- ifelse(gen_2010$OTHER_GEN == 0, NA, gen_2010$OTHER_GEN)
 
 ######################## input list ##########################
 energySource_dist <- c("Select All", "Select Renewable", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other")
-
+year_dist <- c("2000", "2010", "2018")
+state_dist <- state.name
+map_dist <- c("AAA", "BBB", "CCC")
 
