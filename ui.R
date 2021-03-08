@@ -134,7 +134,8 @@ ui <- fluidPage(class = "p-0 m-0",
                                                     #leaflet type start
                                                     tags$div(class = "filter",
                                                         checkboxGroupInput("mapTypeInput_first", "Map type: ", choices = c(map_dist))
-                                                    ) #leaflet type end
+                                                    ), #leaflet type end
+                                                    actionButton("reset_com_first", "Reset view")
                                                 ),
                                                 column(9,
                                                     tags$div(style = "height: 680px",
@@ -190,7 +191,8 @@ ui <- fluidPage(class = "p-0 m-0",
                                                     #leaflet type start
                                                     tags$div(class = "filter",
                                                         checkboxGroupInput("mapTypeInput_second", "Map type: ", choices = c(map_dist))
-                                                    ) #leaflet type end
+                                                    ), #leaflet type end
+                                                    actionButton("reset_com_second", "Reset view")
                                                 ),
                                                 column(9,
                                                     tags$div(style = "height: 680px",
