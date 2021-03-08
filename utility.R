@@ -1,5 +1,7 @@
+source("global.R")
+
 getMapTable <- function(data, stateInput, energySourceInput) {
-  gen_year_state <- subset(gen_2018, STATE == stateInput)
+  gen_year_state <- subset(data, STATE == stateInput)
   
   
   slice_gen_year_state <- data.frame(matrix(ncol = 7, nrow = 0))
@@ -132,10 +134,22 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   }
   
   #order generation, let smaller circle at the top layer
-  slice_gen_year_state[order(slice_gen_year_state$GEN),]
+  slice_gen_year_state <- slice_gen_year_state[order(-slice_gen_year_state$GEN),]
   
   slice_gen_year_state$U_PLANT_LAT <- jitter(slice_gen_year_state$PLANT_LAT, factor = 0.1)
   slice_gen_year_state$U_PLANT_LONG <- jitter(slice_gen_year_state$PLANT_LONG, factor = 0.1)
   
   return(slice_gen_year_state)
+}
+
+getTableByYear <- function(yearInput) {
+  if(yearInput == "2000") {
+    return (gen_2000)
+  }
+  else if (yearInput == "2010") {
+    return (gen_2010)
+  }
+  else if (yearInput == "2018") {
+    return (gen_2018)
+  }
 }

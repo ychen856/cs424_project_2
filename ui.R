@@ -94,9 +94,14 @@ ui <- fluidPage(class = "p-0 m-0",
                                         #card Start
                                         tags$div(class = "card-body",
                                             tags$div(
-                                                column(4, class = "p-0",
+                                                column(2, class = "p-0",
                                                     tags$div(class = "title",
                                                         tags$span("First Map")
+                                                    )
+                                                ),
+                                                column(2, class = "p-0",
+                                                    tags$div(class = "",
+                                                        checkboxInput("isSync", label = "sync", value = FALSE)
                                                     )
                                                 ),
                                                 column(4,
@@ -120,18 +125,23 @@ ui <- fluidPage(class = "p-0 m-0",
                                             ),
                                             fluidRow(style = "margin: 2px",
                                                 column(3,
+                                                    uiOutput("checkbox_first"),
                                                     #Energy source filter start
-                                                    tags$div(class = "filter",
-                                                        checkboxGroupInput("energySourceInput_first_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
-                                                        checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
-                                                    ), #energy source filter end
+                                                    #tags$div(class = "filter",
+                                                    #    checkboxGroupInput("energySourceInput_first_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
+                                                    #    checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+                                                    #), #energy source filter end
                                                     #leaflet type start
                                                     tags$div(class = "filter",
                                                         checkboxGroupInput("mapTypeInput_first", "Map type: ", choices = c(map_dist))
                                                     ) #leaflet type end
                                                 ),
                                                 column(9,
-
+                                                    tags$div(style = "height: 680px",
+                                                        shinycssloaders::withSpinner(
+                                                            leafletOutput("leaf_com_first", height = 630),
+                                                        )
+                                                    )
                                                 )
 
                                             ) #End of fluid row
@@ -154,7 +164,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                                     tags$div(
                                                         tags$div(class = "filter, cust-text",
                                                             selectizeInput(
-                                                                'yearInput_first', 'Select a year: ', choices = year_dist, selected = "2018", multiple = FALSE
+                                                                'yearInput_second', 'Select a year: ', choices = year_dist, selected = "2018", multiple = FALSE
                                                             )
                                                         )
                                                     )
@@ -163,7 +173,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                                     tags$div(
                                                         tags$div(class = "filter, cust-text",
                                                             selectizeInput(
-                                                                'stateInput_first', 'Select a state: ', choices = state_dist, selected = "Illinois", multiple = FALSE
+                                                                'stateInput_second', 'Select a state: ', choices = state_dist, selected = "Illinois", multiple = FALSE
                                                             )
                                                         )
                                                     )
@@ -171,19 +181,23 @@ ui <- fluidPage(class = "p-0 m-0",
                                             ),
                                             fluidRow(style = "margin: 2px",
                                                 column(3,
+                                                    uiOutput("checkbox_second"),
                                                     #Energy source filter start
-                                                    tags$div(class = "filter",
-                                                        
-                                                        checkboxGroupInput("energySourceInput_second_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
-                                                        checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
-                                                    ), #energy source filter end
+                                                    #tags$div(class = "filter",   
+                                                    #    checkboxGroupInput("energySourceInput_second_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
+                                                    #    checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+                                                    #), #energy source filter end
                                                     #leaflet type start
                                                     tags$div(class = "filter",
                                                         checkboxGroupInput("mapTypeInput_second", "Map type: ", choices = c(map_dist))
                                                     ) #leaflet type end
                                                 ),
-                                                column(9
-
+                                                column(9,
+                                                    tags$div(style = "height: 680px",
+                                                        shinycssloaders::withSpinner(
+                                                            leafletOutput("leaf_com_second", height = 630),
+                                                        )
+                                                    )
                                                 )
                                             ) #End of fluid row
                                         ) #End of card

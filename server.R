@@ -24,8 +24,6 @@ function(input, output, session) {
   #Data Filter
   #energy source input check box
   observe({
-    energySourceInputList <- NULL
-    #print(input$energySourceInput)
     if("Select All" %in% input$energySourceInput)  {
       updateCheckboxGroupInput(session,"energySourceInput", selected=c("Select All", energySource_dist))
     }
@@ -121,7 +119,6 @@ function(input, output, session) {
                  icon = quakeIcons["other"],
                  #popup = ~PointUse
       )%>%
-      
       addLegend("bottomright", colors= c("#e6194B", "#f58231","#ffe119" ,"#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9"), 
               labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), title="Energy Source") %>%
       addLayersControl(
@@ -136,15 +133,65 @@ function(input, output, session) {
 
 
   ################## Page 2 ####################
-  fff<- NULL
+  #first graph year input
+  gen_year_first <- NULL
+  observeEvent(input$yearInput_first, {  
+    gen_year_first <- getTableByYear(input$yearInput_first)
+    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first)
+
+  })
+  
+  #first graph state input
+  observeEvent(input$stateInput_first, {  
+    gen_year_first <- getTableByYear(input$yearInput_first)
+    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first)
+  })
+  
+  #if sync
+  observeEvent(input$isSync, {
+    if(input$isSync) {
+      output$checkbox_first <- renderUI({
+        #Energy source filter start
+        tags$div(class = "filter",
+               checkboxGroupInput("energySourceInput_first_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
+               checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+        ) #energy source filter end
+      })
+      output$checkbox_second <- renderUI({
+        #Energy source filter start
+        tags$div(class = "filter",
+                 checkboxGroupInput("energySourceInput_second_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
+                 checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+        ) #energy source filter end
+      })
+    }
+    else {
+      output$checkbox_first <- renderUI({
+        #Energy source filter start
+        tags$div(class = "filter",
+                 checkboxGroupInput("energySourceInput_first_unsync", "Energy source: ", choices = c(energySource_dist))
+        ) #energy source filter end
+      })
+      output$checkbox_second <- renderUI({
+        #Energy source filter start
+        tags$div(class = "filter",
+                 checkboxGroupInput("energySourceInput_second_unsync", "Energy source: ", choices = c(energySource_dist))
+        ) #energy source filter end
+      })
+    }
+  })
+  
+  #first graph energy source input sync
+  temp<- NULL
+  temp_adm <- NULL
   observe({
     temp <- input$energySourceInput_first
+
     if("Select All" %in% input$energySourceInput_first_adm) {
       updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select All", "Select Renewable", "Select nonRenewable"))
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select All", "Select Renewable", "Select nonRenewable"))
       updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
       updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
-      
     }
     else if("Select Renewable" %in% input$energySourceInput_first_adm && "Select nonRenewable" %in% input$energySourceInput_first_adm) {
       updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable", "Select nonRenewable"))
@@ -164,9 +211,73 @@ function(input, output, session) {
         updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
         updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
     }
+    else {
+      updateCheckboxGroupInput(session, "energySourceInput_second_adm", 
+                               choices = c("Select All", "Select Renewable", "Select nonRenewable"),
+                               selected = input$energySourceInput_first_adm)
+    }
+      
     temp <- input$energySourceInput_first
   })
   
+  observe({
+    if(length(input$energySourceInput_first_adm == 3)) {}
+    else {
+    updateCheckboxGroupInput(session, "energySourceInput_second", 
+                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
+                             selected = input$energySourceInput_first)
+    } 
+    
+    gen_year_first <- getTableByYear(input$yearInput_first)
+    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first)
+
+      gen_com_first_map <- getComparisonMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
+
+      output$leaf_com_first <- renderLeaflet({
+        gen_com_first_map
+      })
+  })
+  
+  #first graph energy source input unsync
+  observe({
+    if("Select All" %in% input$energySourceInput_first_unsync)  {
+      updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c("Select All", energySource_dist))
+    }
+    else{ 
+      if("Select Renewable" %in% input$energySourceInput_first_unsync) {
+        updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c(input$energySourceInput_first_unsync, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+      }
+      if("Select nonRenewable" %in% input$energySourceInput_first_unsync) {
+        updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c(input$energySourceInput_first_unsync, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+      }
+    }
+    
+    gen_year_first <- getTableByYear(input$yearInput_first)
+    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first_unsync)
+    
+    gen_com_first_map <- getComparisonMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
+    
+    #render map output
+    output$leaf_com_first <- renderLeaflet({
+      gen_com_first_map
+    })
+  })
+  
+  
+  #second graph year input
+  gen_year_second <- NULL
+  observeEvent(input$yearInput_second, {  
+    gen_year_second <- getTableByYear(input$yearInput_second)
+    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
+  })
+  
+  #second graph state input
+  observeEvent(input$stateInput_second, {  
+    gen_year_second <- getTableByYear(input$yearInput_second)
+    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
+  })
+  
+  #second graph energy source input sync
   observe({
     updateCheckboxGroupInput(session, "energySourceInput_first_adm", 
                              choices = c("Select All", "Select Renewable", "Select nonRenewable"),
@@ -174,118 +285,170 @@ function(input, output, session) {
   })
   
   observe({
-    print("ZZ")
-    updateCheckboxGroupInput(session, "energySourceInput_second", 
-                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
-                             selected = input$energySourceInput_first)
-    #fff <- input$energySourceInput_first
-    
-    #print(fff)
-  })
-  
-  observe({
-    print("EE")
     updateCheckboxGroupInput(session, "energySourceInput_first", 
                              choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
                              selected = input$energySourceInput_second)
+    
+    gen_year_second <- getTableByYear(input$yearInput_second)
+    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
+    
+    gen_com_second_map <- getComparisonMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
+    
+    #render map output
+    output$leaf_com_second <- renderLeaflet({
+      gen_com_second_map
+    })
   })
   
-  output$leaf3 <- renderLeaflet({
-    leaflet_IL_2018 <- leaflet(gen_2018_IL) %>%
-      # Base groups
-      addTiles(group = "OSM (default)") %>%
-      addProviderTiles(providers$Stamen.Toner, group = "Toner") %>%
-      addProviderTiles(providers$Stamen.TonerLite, group = "Toner Lite") %>%
-      # Overlay groups
-      #if("COAL_GEN" %in% colnames(gen_2018_IL)) 
-      leaflet_IL_2018 <- leaflet_IL_2018 %>% addCircles(~PLANT_LONG, ~PLANT_LAT, 2000, stroke = F, fillOpacity=1, group = "Coal", color = "#e6194B", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>", "Generation Capacity: ", gen_2018_IL$COAL_GEN)) %>%
-        #if("OIL_GEN" %in% colnames(gen_2018_IL)) 
-        leaflet_IL_2018 <- leaflet_IL_2018 %>% addCircles(~PLANT_LONG, ~PLANT_LAT, 2000, stroke = F, fillOpacity=1, group = "Oil", color = "#f58231", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>", "Generation Capacity: ", gen_2018_IL$OIL_GEN)) %>%
-          
-          
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~GAS_GEN/100, stroke = F, fillOpacity=0.4, group = "Gas", color = "#ffe119", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                       "Generation Capacity: ", gen_2018_IL$GAS_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~NUCLEAR_GEN/100, stroke = F, fillOpacity=0.2, group = "Nuclear", color = "#bfef45", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                               "Generation Capacity: ", gen_2018_IL$NUCLEAR_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~HYDRO_GEN/100, stroke = F, fillOpacity=0.3, group = "Hydro", color = "#3cb44b", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                           "Generation Capacity: ", gen_2018_IL$HYDRO_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~BIOMASS_GEN/100, stroke = F, fillOpacity=0.3, group = "Biomass", color = "#42d4f4", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                               "Generation Capacity: ", gen_2018_IL$BIOMASS_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~WIND_GEN/100, stroke = F, fillOpacity=0.3, group = "Wind", color = "#4363d8", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                         "Generation Capacity: ", gen_2018_IL$WIND_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~SOLAR_GEN/100, stroke = F, fillOpacity=0.3, group = "Solar", color = "#911eb4", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                           "Generation Capacity: ", gen_2018_IL$SOLAR_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~GEOTHERMAL_GEN/100, stroke = F, fillOpacity=0.3, group = "Geothermal", color = "#f032e6", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                                     "Generation Capacity: ", gen_2018_IL$GEOTHERMAL_GEN)) %>%
-          addCircles(~PLANT_LONG, ~PLANT_LAT, ~OTHER_FOSSIL_GEN/100, stroke = F, fillOpacity=0.3, group = "Other", color = "#a9a9a9", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                                  "Generation Capacity: ", gen_2018_IL$OTHER_GEN)) %>%
-          addLegend("bottomright", colors= c("#e6194B", "#f58231","#ffe119" ,"#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9"), 
-                    labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), title="Energy Source") %>%
-          
-          # Layers control
-          addLayersControl(
-            baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
-            overlayGroups = c("Coal", "Oil"),
-            options = layersControlOptions(collapsed = FALSE)
-          )
+  #second graph energy source input unsync
+  observe({
+    if("Select All" %in% input$energySourceInput_second_unsync)  {
+      updateCheckboxGroupInput(session,"energySourceInput_second_unsync", selected=c("Select All", energySource_dist))
+    }
+    else{ 
+      if("Select Renewable" %in% input$energySourceInput_second_unsync) {
+        updateCheckboxGroupInput(session,"energySourceInput_second_unsync", selected=c(input$energySourceInput_second_unsync, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+      }
+      if("Select nonRenewable" %in% input$energySourceInput_second_unsync) {
+        updateCheckboxGroupInput(session,"energySourceInput_second_unsync", selected=c(input$energySourceInput_second_unsync, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+      }
+    }
+    
+    gen_year_second <- getTableByYear(input$yearInput_second)
+    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second_unsync)
+    
+    gen_com_second_map <- getComparisonMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
+    
+    #render map output
+    output$leaf_com_second <- renderLeaflet({
+      gen_com_second_map
+    })
   })
   
-  
-  #    output$map <- renderLeaflet({
-  #      leaflet() %>%
-  #        addTiles() %>%
-  #        setView(lng = -93.85, lat = 37.45, zoom = 4)
-  #    })
-  
-  #    leafletProxy("map", data = gen_2018_IL) %>%
-  #      clearShapes() %>%
-  #      addCircles(~PLANT_LONG, ~PLANT_LAT, radius=~COAL_GEN/100, layerId=~ORIS_CODE,
-  #               stroke=FALSE, fillOpacity=0.4, fillColor="#e6194B")
-  #  
+
+
   
   
-  output$leaf2 <- renderLeaflet({
-    leaflet(gen_2018_IL) %>%
-      # Base groups
-      addTiles(group = "OSM (default)") %>%
-      addProviderTiles(providers$Stamen.Toner, group = "Toner") %>%
-      addProviderTiles(providers$Stamen.TonerLite, group = "Toner Lite") %>%
+  getComparisonMap <- function(slice_gen, stateInput) {
+    leaflet() %>% 
+      addProviderTiles(
+        providers$CartoDB.Positron, group = "Light"
+      ) %>%
+      addProviderTiles(
+        providers$CartoDB.DarkMatter, group = "Dark"
+      ) %>%
+      setView(
+        lng = subset(state_location, state == stateInput)$longtitude, 
+        lat = subset(state_location, state == stateInput)$latitude,
+        zoom = subset(state_location, state == stateInput)$zoom
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Coal"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.4, 
+        color = "#e6194B", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Coal")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Coal")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Oil"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.4, 
+        color = "#f58231", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Oil")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Oil")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Gas"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.4, 
+        color = "#ffe119", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Gas")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Gas")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Nuclear"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT,
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.2, 
+        color = "#bfef45", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Nuclear")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Nuclear")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Hydro"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT,
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.3, 
+        color = "#3cb44b", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Hydrio")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Hydrio")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Biomass"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.3, 
+        color = "#42d4f4", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Biomass")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Biomass")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Wind"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.3, 
+        color = "#4363d8", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Wind")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Wind")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Solar"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.5, 
+        color = "#911eb4", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Solar")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Solar")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Geothermal"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.3, 
+        color = "#f032e6", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Geothermal")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Geothermal")$GEN)
+      ) %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Other"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = ~sqrt(GEN/100)*100, 
+        fillOpacity=0.3, 
+        color = "#a9a9a9", 
+        popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Other")$ORIS_CODE, "<br>", "Generation Capacity: ", subset(slice_gen, SOURCE == "Other")$GEN)) %>%
       
-      # Overlay groups
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~COAL_GEN/100, stroke = F, fillOpacity=0.3, group = "Coal", color = "#e6194B", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                     "Generation Capacity: ", gen_2018_IL$COAL_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~OIL_GEN/100, stroke = F, fillOpacity=0.3, group = "Oil", color = "#f58231", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                   "Generation Capacity: ", gen_2018_IL$OIL_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~GAS_GEN/100, stroke = F, fillOpacity=0.4, group = "Gas", color = "#ffe119", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                   "Generation Capacity: ", gen_2018_IL$GAS_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~NUCLEAR_GEN/100, stroke = F, fillOpacity=0.2, group = "Nuclear", color = "#bfef45", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                           "Generation Capacity: ", gen_2018_IL$NUCLEAR_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~HYDRO_GEN/100, stroke = F, fillOpacity=0.3, group = "Hydro", color = "#3cb44b", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                       "Generation Capacity: ", gen_2018_IL$HYDRO_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~BIOMASS_GEN/100, stroke = F, fillOpacity=0.3, group = "Biomass", color = "#42d4f4", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                           "Generation Capacity: ", gen_2018_IL$BIOMASS_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~WIND_GEN/100, stroke = F, fillOpacity=0.3, group = "Wind", color = "#4363d8", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                     "Generation Capacity: ", gen_2018_IL$WIND_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~SOLAR_GEN/100, stroke = F, fillOpacity=0.3, group = "Solar", color = "#911eb4", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                       "Generation Capacity: ", gen_2018_IL$SOLAR_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~GEOTHERMAL_GEN/100, stroke = F, fillOpacity=0.3, group = "Geothermal", color = "#f032e6", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                                 "Generation Capacity: ", gen_2018_IL$GEOTHERMAL_GEN)) %>%
-      addCircles(~PLANT_LONG, ~PLANT_LAT, ~OTHER_FOSSIL_GEN/100, stroke = F, fillOpacity=0.3, group = "Other", color = "#a9a9a9", popup=paste("ORIS Code: ", gen_2018_IL$ORIS_CODE, "<br>",
-                                                                                                                                              "Generation Capacity: ", gen_2018_IL$OTHER_GEN)) %>%
       addLegend("bottomright", colors= c("#e6194B", "#f58231","#ffe119" ,"#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9"), 
                 labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), title="Energy Source") %>%
-      
-      # Layers control
       addLayersControl(
-        baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
-        overlayGroups = c("Coal", "Oil"),
+        baseGroups = c("Light", "Dark"),
         options = layersControlOptions(collapsed = FALSE)
       )
-  })
-  
-  
-  
-  
+  }
 }
  
 
