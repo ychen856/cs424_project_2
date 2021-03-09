@@ -1,11 +1,15 @@
 source("global.R")
 
 getMapTable <- function(data, stateInput, energySourceInput) {
-  gen_year_state <- subset(data, STATE == stateInput)
+  if(stateInput == "US") {
+    gen_year_state <- data
+  }
+  else {
+    gen_year_state <- subset(data, STATE == stateInput)
+  }
   
-  
-  slice_gen_year_state <- data.frame(matrix(ncol = 7, nrow = 0))
-  slice_gen_year_state_col <- c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT" , "GEN", "SOURCE", "U_PLANT_LONG", "U_PLANT_LONG")
+  slice_gen_year_state <- data.frame(matrix(ncol = 10, nrow = 0))
+  slice_gen_year_state_col <- c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT" , "GEN", "SOURCE", "U_PLANT_LONG", "U_PLANT_LONG", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")
   colnames(slice_gen_year_state) <- slice_gen_year_state_col
   slice_gen_year_state$PLANT_LONG <- as.double(slice_gen_year_state$PLANT_LONG)
   slice_gen_year_state$PLANT_LAT <- as.double(slice_gen_year_state$PLANT_LAT)
@@ -15,7 +19,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Coal
   if("Coal" %in% energySourceInput) {
-    coal_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "COAL_GEN")]
+    coal_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "COAL_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     coal_plants_table<-coal_plants_table[!(is.na(coal_plants_table$COAL_GEN)),]
     names(coal_plants_table)[names(coal_plants_table) == "COAL_GEN"] <- c("GEN")
     
@@ -27,7 +31,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Oil
   if("Oil" %in% energySourceInput) {
-    oil_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "OIL_GEN")]
+    oil_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "OIL_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     oil_plants_table <- oil_plants_table[!(is.na(oil_plants_table$OIL_GEN)),]
     names(oil_plants_table)[names(oil_plants_table) == "OIL_GEN"] <- c("GEN")
     
@@ -39,7 +43,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Gas
   if("Gas" %in% energySourceInput) {
-    gas_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "GAS_GEN")]
+    gas_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "GAS_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     gas_plants_table <- gas_plants_table[!(is.na(gas_plants_table$GAS_GEN)),]
     names(gas_plants_table)[names(gas_plants_table) == "GAS_GEN"] <- c("GEN")
     
@@ -51,7 +55,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Nuclear
   if("Nuclear" %in% energySourceInput) {
-    nuclear_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "NUCLEAR_GEN")]
+    nuclear_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "NUCLEAR_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     nuclear_plants_table <- nuclear_plants_table[!(is.na(nuclear_plants_table$NUCLEAR_GEN)),]
     names(nuclear_plants_table)[names(nuclear_plants_table) == "NUCLEAR_GEN"] <- c("GEN")
     
@@ -63,7 +67,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Hydro
   if("Hydro" %in% energySourceInput) {
-    hydro_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "HYDRO_GEN")]
+    hydro_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "HYDRO_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     hydro_plants_table <- hydro_plants_table[!(is.na(hydro_plants_table$HYDRO_GEN)),]
     names(hydro_plants_table)[names(hydro_plants_table) == "HYDRO_GEN"] <- c("GEN")
     
@@ -75,7 +79,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Biomass
   if("Biomass" %in% energySourceInput) {
-    biomass_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "BIOMASS_GEN")]
+    biomass_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "BIOMASS_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     biomass_plants_table <- biomass_plants_table[!(is.na(biomass_plants_table$BIOMASS_GEN)),]
     names(biomass_plants_table)[names(biomass_plants_table) == "BIOMASS_GEN"] <- c("GEN")
     
@@ -87,7 +91,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Wind
   if("Wind" %in% energySourceInput) {
-    wind_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "WIND_GEN")]
+    wind_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "WIND_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     wind_plants_table <- wind_plants_table[!(is.na(wind_plants_table$WIND_GEN)),]
     names(wind_plants_table)[names(wind_plants_table) == "WIND_GEN"] <- c("GEN")
     
@@ -99,7 +103,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Solar
   if("Solar" %in% energySourceInput) {
-    solar_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "SOLAR_GEN")]
+    solar_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "SOLAR_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     solar_plants_table <- solar_plants_table[!(is.na(solar_plants_table$SOLAR_GEN)),]
     names(solar_plants_table)[names(solar_plants_table) == "SOLAR_GEN"] <- c("GEN")
     
@@ -111,7 +115,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Geothermal
   if("Geothermal" %in% energySourceInput) {
-    geothermal_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "GEOTHERMAL_GEN")]
+    geothermal_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "GEOTHERMAL_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     geothermal_plants_table <- geothermal_plants_table[!(is.na(geothermal_plants_table$GEOTHERMAL_GEN)),]
     names(geothermal_plants_table)[names(geothermal_plants_table) == "GEOTHERMAL_GEN"] <- c("GEN")
     
@@ -123,7 +127,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   
   #Other
   if("Other" %in% energySourceInput) {
-    other_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_LONG", "PLANT_LAT", "OTHER_GEN")]
+    other_plants_table <- gen_year_state[c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "OTHER_GEN", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
     other_plants_table <- other_plants_table[!(is.na(other_plants_table$OTHER_GEN)),]
     names(other_plants_table)[names(other_plants_table) == "OTHER_GEN"] <- c("GEN")
     

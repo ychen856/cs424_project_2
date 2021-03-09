@@ -217,3 +217,20 @@
 .leaflet-marker-icon {
   margin-top: -21px !important;
 }
+
+.slider-right .irs-line-mid{
+  background: #428bca ;
+  border: 1px solid #428bca ;
+}
+.slider-right .irs-line-right{
+  background: #428bca ;
+}
+.slider-right .irs-bar {
+  background: linear-gradient(to bottom, #DDD -50%, #FFF 150%);
+  border-top: 1px solid #CCC ;
+  border-bottom: 1px solid #CCC ;
+}
+.slider-right .irs-bar-edge {
+  background: inherit ;
+  border: inherit ;
+}

@@ -159,6 +159,11 @@ gen_2018$OTHER_UNKNOWN_GEN <- as.numeric(gsub(",", "", gen_2018$OTHER_UNKNOWN_GE
 gen_2018$TOTAL_NONRENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2018$TOTAL_NONRENEWABLE_GEN))
 gen_2018$TOTAL_RENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2018$TOTAL_RENEWABLE_GEN))
 
+
+
+gen_2018$TOTAL_RENEWABLE_PER <- as.numeric(gsub(",", "", gsub("%", "", gen_2018$TOTAL_RENEWABLE_PER)))
+gen_2018$TOTAL_NONRENEWABLE_PER <- as.numeric(gsub(",", "", gsub("%", "", gen_2018$TOTAL_NONRENEWABLE_PER)))
+
 gen_2018$OTHER_GEN <- (gen_2018$OTHER_FOSSIL_GEN + gen_2018$OTHER_UNKNOWN_GEN)
 
 gen_2018$COAL_GEN <- ifelse(gen_2018$COAL_GEN == 0, NA, gen_2018$COAL_GEN)
@@ -209,6 +214,9 @@ gen_2000$OTHER_WASTE_GEN <- as.numeric(gsub(",", "", gen_2000$OTHER_WASTE_GEN))
 gen_2000$TOTAL_NONRENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2000$TOTAL_NONRENEWABLE_GEN))
 gen_2000$TOTAL_RENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2000$TOTAL_RENEWABLE_GEN))
 
+gen_2000$TOTAL_RENEWABLE_PER <- as.numeric(gsub(",", "", gen_2000$TOTAL_RENEWABLE_PER))
+gen_2000$TOTAL_NONRENEWABLE_PER <- as.numeric(gsub(",", "", gen_2000$TOTAL_NONRENEWABLE_PER))
+
 gen_2000$OTHER_GEN <- (gen_2000$OTHER_FOSSIL_GEN + gen_2000$OTHER_WASTE_GEN)
 
 gen_2000$COAL_GEN <- ifelse(gen_2000$COAL_GEN == 0, NA, gen_2000$COAL_GEN)
@@ -245,6 +253,9 @@ gen_2010$OTHER_UNKNOWN_GEN <- as.numeric(gsub(",", "", gen_2010$OTHER_UNKNOWN_GE
 gen_2010$TOTAL_NONRENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2010$TOTAL_NONRENEWABLE_GEN))
 gen_2010$TOTAL_RENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2010$TOTAL_RENEWABLE_GEN))
 
+gen_2010$TOTAL_RENEWABLE_PER <- as.numeric(gsub(",", "", gen_2010$TOTAL_RENEWABLE_PER))
+gen_2010$TOTAL_NONRENEWABLE_PER <- as.numeric(gsub(",", "", gen_2010$TOTAL_NONRENEWABLE_PER))
+
 gen_2010$OTHER_GEN <- (gen_2010$OTHER_FOSSIL_GEN + gen_2010$OTHER_UNKNOWN_GEN)
 
 gen_2010$COAL_GEN <- ifelse(gen_2010$COAL_GEN == 0, NA, gen_2010$COAL_GEN)
@@ -267,14 +278,14 @@ gen_2010$OTHER_GEN <- ifelse(gen_2010$OTHER_GEN == 0, NA, gen_2010$OTHER_GEN)
 energySource_dist <- c("Select All", "Select Renewable", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other")
 year_dist <- c("2000", "2010", "2018")
 state_dist <- state.name
-map_dist <- c("AAA", "BBB", "CCC")
+map_dist <- c("Light", "Dark", "Terrain")
 
 
 ####################### state location ########################
-state_location <- data.frame (state  = c("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA","MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"),
-                  longtitude = c(-86.902298, -153.369141, -111.093735, -92.199997, -119.417931, -105.358887, -72.699997, -75.5, -81.760254, -83.441162, -155.844437, -114.742043, -89, -86.126976, -93.581543, -98, -85.270020, -92.329102, -68.972168, -76.641273, -71.382439, -84.506836, -94.636230, -90, -92.603760, -109.533691, -100, -117.224121, -71.5, -74.871826, -106.018066, -75, -80.793457, -100.437012, -82.996216, -96.921387, -120.5, -77.194527, -71.5, -81.163727,-100,-86.660156, -100, -111.950684, -72.699997, -78.024902, -120.740135, -80.5, -89, -107.290283),
-                  latitude = c(32.318230, 66.160507, 34.048927, 34.799999, 36.778259, 39.113014, 41.599998, 39, 27.994402, 33.247875, 19.741755, 44.068203, 40, 40.273502, 42.032974, 38.5, 37.839333, 30.391830, 45.367584, 39.045753, 42.407211, 44.182205, 46.392410, 33, 38.573936, 46.965260, 41.5, 39.876019, 44, 39.833851, 34.307144, 43, 35.782169, 47.650589	, 40.367474, 36.084621, 44, 41.203323, 41.700001, 33.836082, 44.500000, 35.860119, 31, 39.419220, 44.000000, 37.926868, 47.751076, 39, 44.5, 43.075970),
-                  zoom = c(7, 5, 6, 7, 6, 7, 9, 8, 6, 7, 7, 6, 6.5, 7, 7, 6.5, 6.5, 6.5, 6.5, 6.5, 7.5, 6, 6, 7, 6.5, 6, 6, 6, 8, 8, 7, 6.5, 6.5, 7, 7, 7, 7, 6.5, 9, 7, 6.5, 6, 6, 7, 8, 7, 6.5, 7, 7, 6)
+state_location <- data.frame (state  = c("US", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA","MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"),
+                  longtitude = c(-94.6, -86.902298, -153.369141, -111.093735, -92.199997, -119.417931, -105.358887, -72.699997, -75.5, -81.760254, -83.441162, -155.844437, -114.742043, -89, -86.126976, -93.581543, -98, -85.270020, -92.329102, -68.972168, -76.641273, -71.382439, -84.506836, -94.636230, -90, -92.603760, -109.533691, -100, -117.224121, -71.5, -74.871826, -106.018066, -75, -80.793457, -100.437012, -82.996216, -96.921387, -120.5, -77.194527, -71.5, -81.163727,-100,-86.660156, -100, -111.950684, -72.699997, -78.024902, -120.740135, -80.5, -89, -107.290283),
+                  latitude = c(39, 32.318230, 66.160507, 34.048927, 34.799999, 36.778259, 39.113014, 41.599998, 39, 27.994402, 33.247875, 19.741755, 44.068203, 40, 40.273502, 42.032974, 38.5, 37.839333, 30.391830, 45.367584, 39.045753, 42.407211, 44.182205, 46.392410, 33, 38.573936, 46.965260, 41.5, 39.876019, 44, 39.833851, 34.307144, 43, 35.782169, 47.650589	, 40.367474, 36.084621, 44, 41.203323, 41.700001, 33.836082, 44.500000, 35.860119, 31, 39.419220, 44.000000, 37.926868, 47.751076, 39, 44.5, 43.075970),
+                  zoom = c(5, 7, 5, 6, 7, 6, 7, 9, 8, 6, 7, 7, 6, 6.5, 7, 7, 6.5, 6.5, 6.5, 6.5, 6.5, 7.5, 6, 6, 7, 6.5, 6, 6, 6, 8, 8, 7, 6.5, 6.5, 7, 7, 7, 7, 6.5, 9, 7, 6.5, 6, 6, 7, 8, 7, 6.5, 7, 7, 6)
 )
 
 
