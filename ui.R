@@ -272,6 +272,69 @@ ui <- fluidPage(class = "p-0 m-0",
                         )
                     ), #whole us
 
+                    #idle & new
+                    tabPanel("Idle & New Plants", class = "p-0",
+                        mainPanel(class = "panel p-0",
+                            fluidRow(
+                                column(12, class = "p-0",
+                                    tags$div(class = "card border-title shadow",
+                                        #card Start
+                                        tags$div(class = "card-body",
+                                            tags$div(
+                                                column(2, class = "p-0",
+                                                    tags$div(
+                                                        class = "title",
+                                                        tags$span("Idle & New Plants")
+                                                    )
+                                                ),
+                                                column(10,
+                                                    tags$div(
+                                                        tags$div(class = "filter cust-text",
+                                                            selectizeInput(
+                                                                'yearInput_in', 'Select a year: ', choices = c(2010, 2018), selected = "2018", multiple = FALSE
+                                                            )
+                                                        )
+                                                    )
+                                                ),
+                                                column(10)
+                                            ),
+                                            fluidRow(style = "margin: 2px",
+                                                column(2, style = "background-color: white",
+                                                    tags$div(
+                                                        tags$div(class = "subtitle",
+                                                            tags$i(class = "fas fa-search"),
+                                                                "Data Filter:"
+                                                        ),
+
+                                                        #Energy source filter start
+                                                        tags$div(class = "filter",
+                                                            checkboxGroupInput("sourceInput_in", "Energy source: ", choices = c(energySource_dist))
+                                                        ) #energy source filter end
+                                                    )
+                                                ),
+                                                column(10,
+                                                    tags$div(class = "row",
+                                                        column(12,
+                                                            tags$div(class = "subtitle",
+                                                                tags$i(class = "fas fa-map-marked-alt"),
+                                                                    "Map:"
+                                                            ),
+                                                            tags$div(style = "height: 680px",
+                                                                #shinycssloaders::withSpinner(
+                                                                #    leafletOutput("leaf", height = 630),
+                                                                #)
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            ) #End of fluid row
+                                        ) #End of card body
+                                    ) #End of card
+                                )
+                            )
+                        )
+                    ), #idle & new
+
 #About page start
                                      tabPanel("About", class = "p-0",
                                               mainPanel(class = "panel p-0",

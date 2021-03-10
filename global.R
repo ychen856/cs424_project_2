@@ -159,8 +159,6 @@ gen_2018$OTHER_UNKNOWN_GEN <- as.numeric(gsub(",", "", gen_2018$OTHER_UNKNOWN_GE
 gen_2018$TOTAL_NONRENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2018$TOTAL_NONRENEWABLE_GEN))
 gen_2018$TOTAL_RENEWABLE_GEN <- as.numeric(gsub(",", "", gen_2018$TOTAL_RENEWABLE_GEN))
 
-
-
 gen_2018$TOTAL_RENEWABLE_PER <- as.numeric(gsub(",", "", gsub("%", "", gen_2018$TOTAL_RENEWABLE_PER)))
 gen_2018$TOTAL_NONRENEWABLE_PER <- as.numeric(gsub(",", "", gsub("%", "", gen_2018$TOTAL_NONRENEWABLE_PER)))
 
@@ -234,6 +232,7 @@ gen_2000$TOTAL_NONRENEWABLE_GEN <- ifelse(gen_2000$TOTAL_NONRENEWABLE_GEN == 0, 
 gen_2000$TOTAL_RENEWABLE_GEN <- ifelse(gen_2000$TOTAL_RENEWABLE_GEN == 0, NA, gen_2000$TOTAL_RENEWABLE_GEN)
 gen_2000$OTHER_GEN <- ifelse(gen_2000$OTHER_GEN == 0, NA, gen_2000$OTHER_GEN)
 
+gen_2000$ORIS_CODE = substr(gen_2000$ORIS_CODE,1,nchar(gen_2000$ORIS_CODE)-2)
 
 #2010
 gen_2010$PLANT_LAT <- as.double(gen_2010$PLANT_LAT)
@@ -274,8 +273,22 @@ gen_2010$TOTAL_RENEWABLE_GEN <- ifelse(gen_2010$TOTAL_RENEWABLE_GEN == 0, NA, ge
 gen_2010$OTHER_GEN <- ifelse(gen_2010$OTHER_GEN == 0, NA, gen_2010$OTHER_GEN)
 
 
+gen_2010$ORIS_CODE = substr(gen_2010$ORIS_CODE,1,nchar(gen_2010$ORIS_CODE)-2)
+
+####################### idle & new ###########################
+#2018
+new_2018 <- subset(gen_2018, !(ORIS_CODE %in% gen_2010$ORIS_CODE))
+old_2018 <- subset(gen_2018, (ORIS_CODE %in% gen_2010$ORIS_CODE))
+idle_2018 <- subset(gen_2010, !(ORIS_CODE %in% gen_2018$ORIS_CODE))
+
+#2010
+new_2010 <- subset(gen_2010, !(ORIS_CODE %in% gen_2000$ORIS_CODE))
+old_2010 <- subset(gen_2010, (ORIS_CODE %in% gen_2000$ORIS_CODE))
+idle_2010 <- subset(gen_2000, !(ORIS_CODE %in% gen_2010$ORIS_CODE))
+
+
 ######################## input list ##########################
-energySource_dist <- c("Select All", "Select Renewable", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other")
+energySource_dist <- c("Select All", "Select Renewable", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown")
 year_dist <- c("2000", "2010", "2018")
 state_dist <- state.name
 map_dist <- c("Light", "Dark", "Terrain")

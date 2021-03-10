@@ -47,7 +47,8 @@ function(input, output, session) {
                            wind = makeIcon("map-pin-solid-wind.svg", iconWidth = 12, iconHeight =24),
                            solar = makeIcon("map-pin-solid-solar.svg", iconWidth = 12, iconHeight =24),
                            geothermal = makeIcon("map-pin-solid-geothermal.svg", iconWidth = 12, iconHeight =24),
-                           other = makeIcon("map-pin-solid-other.svg", iconWidth = 12, iconHeight =24)
+                           other = makeIcon("map-pin-solid-other.svg", iconWidth = 12, iconHeight =24),
+                           unknown = makeIcon("map-pin-solid-unknown.svg", iconWidth = 12, iconHeight =24)
                            )
     
     gen_2018_IL_map <- leaflet() %>% 
@@ -122,6 +123,12 @@ function(input, output, session) {
                  icon = quakeIcons["other"],
                  #popup = ~PointUse
       )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Unknown"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["unknown"],
+                 #popup = ~PointUse
+      )%>%
       addLegend("bottomright", colors= c("#e6194B", "#f58231","#808000" ,"#800000", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9"), 
               labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), title="Energy Source") %>%
       addLayersControl(
@@ -157,14 +164,14 @@ function(input, output, session) {
         #Energy source filter start
         tags$div(class = "filter",
                checkboxGroupInput("energySourceInput_first_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
-               checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+               checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
         ) #energy source filter end
       })
       output$checkbox_second <- renderUI({
         #Energy source filter start
         tags$div(class = "filter",
                  checkboxGroupInput("energySourceInput_second_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
-                 checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+                 checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
         ) #energy source filter end
       })
     }
@@ -193,26 +200,26 @@ function(input, output, session) {
     if("Select All" %in% input$energySourceInput_first_adm) {
       updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select All", "Select Renewable", "Select nonRenewable"))
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select All", "Select Renewable", "Select nonRenewable"))
-      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
-      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
+      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
     }
     else if("Select Renewable" %in% input$energySourceInput_first_adm && "Select nonRenewable" %in% input$energySourceInput_first_adm) {
       updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable", "Select nonRenewable"))
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable", "Select nonRenewable"))
-      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
-      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
     }
     else if("Select Renewable" %in% input$energySourceInput_first_adm) {
         updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable"))
         updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable"))
-        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
-        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
     }
     else if("Select nonRenewable" %in% input$energySourceInput_first_adm) {
         updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select nonRenewable"))
         updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select nonRenewable"))
-        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
-        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
+        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
+        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
     }
     else {
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", 
@@ -227,7 +234,7 @@ function(input, output, session) {
     if(length(input$energySourceInput_first_adm == 3)) {}
     else {
     updateCheckboxGroupInput(session, "energySourceInput_second", 
-                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
+                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"),
                              selected = input$energySourceInput_first)
     } 
     
@@ -303,7 +310,7 @@ function(input, output, session) {
   
   observe({
     updateCheckboxGroupInput(session, "energySourceInput_first", 
-                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
+                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"),
                              selected = input$energySourceInput_second)
     
     gen_year_second <- getTableByYear(input$yearInput_second)
@@ -396,10 +403,46 @@ function(input, output, session) {
   #left slider input
   gen_year_second <- NULL
   observeEvent(input$slider_l, {  
+    gen_year_us <- getTableByYear(input$yearInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    
+    if(input$isInverse) {
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+    }
+    else {
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
+    }
+    
+    
+    gen_us <- getLeafletMap(slice_gen_us, "US")
+    
+    output$leaf_us <- renderLeaflet({
+      gen_us
+    })
   })
   
   #right slider input
   observeEvent(input$slider_r, {  
+    gen_year_us <- getTableByYear(input$yearInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    
+    if(input$isInverse) {
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+    }
+    else {
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
+    }
+    
+    
+    gen_us <- getLeafletMap(slice_gen_us, "US")
+    
+    output$leaf_us <- renderLeaflet({
+      gen_us
+    })
   })
   
   observeEvent(input$yearInput_us, {  
@@ -421,10 +464,23 @@ function(input, output, session) {
       }
     }
     
+    
     gen_year_us <- getTableByYear(input$yearInput_us)
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
-    print(max(slice_gen_us$GEN, na.rm = TRUE))
+    print("hi")
+    if(input$isInverse) {
+      leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+      slice_gen_us <- rbind(slice_gen_us, leftHandSide)
+      print("hi2")
+    }
+    else {
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
+      print("hi3")
+    }
+    
     
     gen_us <- getLeafletMap(slice_gen_us, "US")
     
@@ -438,7 +494,15 @@ function(input, output, session) {
     gen_year_us <- getTableByYear(input$yearInput_us)
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
-    print(max(slice_gen_us$GEN, na.rm = TRUE))
+    if(input$isInverse) {
+      print("hi")
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+    }
+    else {
+      slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
+      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
+    }
     
     gen_us <- getLeafletMap(slice_gen_us, "US")
     
@@ -469,7 +533,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.4, 
         color = "#e6194B", 
         popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Coal")$ORIS_CODE, "<br>",
@@ -483,7 +547,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.4, 
         color = "#f58231", 
         popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Oil")$ORIS_CODE, "<br>",
@@ -497,7 +561,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.4, 
         color = "#808000", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Gas")$ORIS_CODE, "<br>",
@@ -511,7 +575,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT,
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.2, 
         color = "#800000", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Nuclear")$ORIS_CODE, "<br>",
@@ -525,7 +589,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT,
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
         color = "#3cb44b", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Hydro")$ORIS_CODE, "<br>",
@@ -539,7 +603,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
         color = "#42d4f4", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Biomass")$ORIS_CODE, "<br>",
@@ -553,7 +617,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
         color = "#4363d8", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Wind")$ORIS_CODE, "<br>",
@@ -567,7 +631,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.5, 
         color = "#911eb4", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Solar")$ORIS_CODE, "<br>",
@@ -581,7 +645,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
         color = "#f032e6", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Geothermal")$ORIS_CODE, "<br>",
@@ -595,7 +659,7 @@ function(input, output, session) {
         lng = ~PLANT_LONG, 
         lat = ~PLANT_LAT, 
         weight = 1,
-        radius = ~sqrt(GEN/100)*100, 
+        radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
         color = "#a9a9a9", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Other")$ORIS_CODE, "<br>",
@@ -605,8 +669,22 @@ function(input, output, session) {
                               "Non-Renewable Energy Source (%)", format(round(subset(slice_gen, SOURCE == "Other")$TOTAL_NONRENEWABLE_PER, 2), nsmall = 2), "<br>")
         ) %>%
       
-      addLegend("bottomright", colors= c("#e6194B", "#f58231","#808000" ,"#800000", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9"), 
-                labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), title="Energy Source") %>%
+      addCircles(
+        data = subset(slice_gen, SOURCE == "Unknown"),
+        lng = ~PLANT_LONG, 
+        lat = ~PLANT_LAT, 
+        weight = 1,
+        radius = 100, 
+        fillOpacity=0.3, 
+        color = "#a9a9a9", 
+        popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Unknown")$ORIS_CODE, "<br>",
+                      "Plant Name: ", subset(slice_gen, SOURCE == "Unknown")$PLANT_NAME, "<br>",
+                      "Unknown Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Unknown")$GEN), format="f", digits=2, big.mark=","), "<br>",
+                      "Renewable Energy Source (%)", format(round(subset(slice_gen, SOURCE == "Unknown")$TOTAL_RENEWABLE_PER, 2), nsmall = 2), "<br>",
+                      "Non-Renewable Energy Source (%)", format(round(subset(slice_gen, SOURCE == "Unknown")$TOTAL_NONRENEWABLE_PER, 2), nsmall = 2), "<br>")
+      ) %>%
+      addLegend("bottomright", colors= c("#e6194B", "#f58231","#808000" ,"#800000", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9", "black"), 
+                labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), title="Energy Source") %>%
       addLayersControl(
         baseGroups = c("Light", "Dark", "Terrain"),
         options = layersControlOptions(collapsed = FALSE)

@@ -137,6 +137,27 @@ getMapTable <- function(data, stateInput, energySourceInput) {
     }
   }
   
+  if("Unknown" %in% energySourceInput) {
+    unknown_plants_table <- gen_year_state[is.na(gen_year_state$COAL_GEN) 
+                                                & is.na(gen_year_state$OIL_GEN)
+                                                & is.na(gen_year_state$GAS_GEN)
+                                                & is.na(gen_year_state$NUCLEAR_GEN)
+                                                & is.na(gen_year_state$HYDRO_GEN)
+                                                & is.na(gen_year_state$BIOMASS_GEN)
+                                                & is.na(gen_year_state$WIND_GEN)
+                                                & is.na(gen_year_state$SOLAR_GEN)
+                                                & is.na(gen_year_state$GEOTHERMAL_GEN)
+                                                & is.na(gen_year_state$OTHER_GEN),
+                                         ][c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")]
+    unknown_plants_table$GEN <- 0
+    if(nrow(unknown_plants_table) > 0) {
+      unknown_plants_table$SOURCE <- "Unknown"
+      slice_gen_year_state <- rbind(slice_gen_year_state, unknown_plants_table)
+    }
+  }
+  
+  
+  
   #order generation, let smaller circle at the top layer
   slice_gen_year_state <- slice_gen_year_state[order(-slice_gen_year_state$GEN),]
   
