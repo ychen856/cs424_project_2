@@ -234,3 +234,6 @@
   background: inherit ;
   border: inherit ;
 }
+.irs-grid-text {
+    transform: rotate(-60deg) translate(-30px) !important;
+}

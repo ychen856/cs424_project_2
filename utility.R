@@ -178,3 +178,36 @@ getTableByYear <- function(yearInput) {
     return (gen_2018)
   }
 }
+
+getSliceIdleNewTable <- function(yearInput, plantTypeInput, energySourceInput) {
+  if(yearInput == "2010") {
+    gen_year_exist <- old_2010
+    gen_year_idle <- idle_2010
+    gen_year_new <- new_2010
+    gen_year_all <- gen_2010
+  }
+  else {
+    gen_year_exist <- old_2018
+    gen_year_idle <- idle_2018
+    gen_year_new <- new_2018
+    gen_year_all <- gen_2018
+  }
+  
+  gen_year <- gen_year_all
+  slice_gen <- getMapTable(gen_year, "US", energySourceInput)
+  
+  if("New Plants" %in% plantTypeInput && "Idle Plants" %in% plantTypeInput) {
+    slice_gen_new <- getMapTable(gen_year_new, "US", energySourceInput)
+    slice_gen <- getMapTable(gen_year_idle, "US", energySourceInput)
+    slice_gen <- rbind(slice_gen, slice_gen_new)
+  }
+  else if("New Plants" %in% plantTypeInput) {
+    gen_year <- gen_year_new
+    slice_gen <- getMapTable(gen_year, "US", energySourceInput)
+  }
+  else if("Idle Plants" %in% plantTypeInput) {
+    gen_year <- gen_year_idle
+    slice_gen <- getMapTable(gen_year, "US", energySourceInput)
+  }
+  return (slice_gen)
+}

@@ -512,19 +512,13 @@ function(input, output, session) {
         updateCheckboxGroupInput(session,"energySourceInput_us", selected=c(input$energySourceInput_us, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
       }
     }
-    print("is inverse?")
-    print(input$isInverse)
-    print(input$slider_l)
-    print(input$slider_r)
     
     gen_year_us <- getTableByYear(input$yearInput_us)
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
     if(input$isInverse) {
       leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
-      print(leftHandSide)
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
-      print(slice_gen_us)
       slice_gen_us <- rbind(slice_gen_us, leftHandSide)
     }
     else {
@@ -569,74 +563,37 @@ function(input, output, session) {
   })
   
   observe({
-    if("All Plants" %in% input$sourceInput_in)  {
-      updateCheckboxGroupInput(session,"sourceInput_in", selected = source_idle_new)
+    if("Select All" %in% input$energySourceInput_in)  {
+      updateCheckboxGroupInput(session,"energySourceInput_in", selected=c("Select All", energySource_dist))
+    }
+    else{ 
+      if("Select Renewable" %in% input$energySourceInput_in) {
+        updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+      }
+      if("Select nonRenewable" %in% input$energySourceInput_in) {
+        updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+      }
     }
     
-    if(input$yearInput_in == "2010") {
-      gen_year_exist <- old_2010
-      gen_year_idle <- idle_2010
-      gen_year_new <- new_2010
-    }
-    else {
-      gen_year_exist <- old_2018
-      gen_year_idle <- idle_2018
-      gen_year_new <- new_2018
-    }
+    slice_gen_in <- getSliceIdleNewTable(input$yearInput_in, input$sourceInput_in, input$energySourceInput_in)
+    gen_idle_new_map <- getLeafletMap(slice_gen_in, "US")
     
-    gen_idle_new_map <- leaflet() %>% 
-      addProviderTiles(
-        providers$CartoDB.Positron, group = "Light"
-      ) %>%
-      setView(
-        lng = subset(state_location, state == "US")$longtitude, 
-        lat = subset(state_location, state == "US")$latitude,
-        zoom = subset(state_location, state == "US")$zoom
-      )
-
-    if("All Plants" %in% input$sourceInput_in) {
-      gen_idle_new_map <- gen_idle_new_map %>% addCircleMarkers(
-        data = gen_year_exist,
-        lat = ~PLANT_LAT,
-        lng = ~PLANT_LONG, 
-        radius = 2,
-        color = "blue",
-        stroke = FALSE, fillOpacity = 0.4
-      )
-    }
-    if("New Plants" %in% input$sourceInput_in) {
-      gen_idle_new_map <- gen_idle_new_map %>% addCircleMarkers(
-        data = gen_year_new,
-        lat = ~PLANT_LAT,
-        lng = ~PLANT_LONG, 
-        radius = 2,
-        color = "red",
-        stroke = FALSE, fillOpacity = 0.4
-      )
-    }
-    if("Idle Plants" %in% input$sourceInput_in) {
-      gen_idle_new_map <- gen_idle_new_map %>% addCircleMarkers(
-        data = gen_year_idle,
-        lat = ~PLANT_LAT,
-        lng = ~PLANT_LONG, 
-        radius = 2,
-        color = "black",
-        stroke = FALSE, fillOpacity = 0.4
-      )
-    }
-    
-    gen_idle_new_map <- gen_idle_new_map %>%
-      addLegend("bottomright", colors= c("blue", "red","black"), 
-                labels=c("have existed", "new plants", "idle plants"), title="Plants") %>%
-      addLayersControl(
-        options = layersControlOptions(collapsed = FALSE)
-      )
     
     output$leaf_in <- renderLeaflet({
       gen_idle_new_map
     })
   })
   
+  #reset button idle or new
+  observeEvent(input$reset_in, {
+    slice_gen_in <- getSliceIdleNewTable(input$yearInput_in, input$sourceInput_in, input$energySourceInput_in)
+    gen_idle_new_map <- getLeafletMap(slice_gen_in, "US")
+    
+    
+    output$leaf_in <- renderLeaflet({
+      gen_idle_new_map
+    })
+  })
   
   #################### generate graph ####################
   getLeafletMap <- function(slice_gen, stateInput) {
