@@ -370,8 +370,8 @@ function(input, output, session) {
       output$slider_left <- renderUI({
         tags$div(class = "cust-text",
                  sliderInput("slider_l", "Generation Range (kMWh):",
-                             min = 0, max = 5500,
-                             value = 5500),
+                             min = 0, max = 16000,
+                             value = 16000),
         )
       })
       output$slider_right <- renderUI({
@@ -407,10 +407,34 @@ function(input, output, session) {
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
     if(input$isInverse) {
-      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      if(input$slider_r < input$slider_l)
+        updateValue_inv_r <- input$slider_l
+      else
+        updateValue_inv_r <- input$slider_r
+      
+      output$slider_right <- renderUI({
+        tags$div(class = "cust-text slider-right",
+                 sliderInput("slider_r", "Generation Range (kMWh):",
+                             min = input$slider_l, max = 32000,
+                             value = updateValue_inv_r),
+        )
+      })
+      leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+      slice_gen_us <- rbind(slice_gen_us, leftHandSide)
     }
     else {
+      if(input$slider_r < input$slider_l)
+        updateValue_r <- input$slider_l
+      else
+        updateValue_r <- input$slider_r
+      output$slider_right <- renderUI({
+        tags$div(class = "cust-text",
+                 sliderInput("slider_r", "Generation Range (kMWh):",
+                             min = input$slider_l, max = 32000,
+                             value = updateValue_r),
+        )
+      })
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
       slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
     }
@@ -429,10 +453,35 @@ function(input, output, session) {
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
     if(input$isInverse) {
-      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      if(input$slider_r < input$slider_l)
+        updateValue_inv_l <- input$slider_r
+      else
+        updateValue_inv_l <- input$slider_l
+
+      output$slider_left <- renderUI({
+        tags$div(class = "cust-text",
+                 sliderInput("slider_l", "Generation Range (kMWh):",
+                             min = 0, max = input$slider_r,
+                             value = updateValue_inv_l),
+        )
+      })
+      leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+      slice_gen_us <- rbind(slice_gen_us, leftHandSide)
     }
     else {
+      if(input$slider_r < input$slider_l)
+        updateValue_l <- input$slider_r
+      else
+        updateValue_l <- input$slider_l
+      
+      output$slider_left <- renderUI({
+        tags$div(class = "cust-text slider-right",
+                 sliderInput("slider_l", "Generation Range (kMWh):",
+                             min = 0, max = input$slider_r,
+                             value = updateValue_l),
+        )
+      })
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
       slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
     }
@@ -446,8 +495,8 @@ function(input, output, session) {
   })
   
   observeEvent(input$yearInput_us, {  
-    gen_year_second <- getTableByYear(input$yearInput_us)
-    #slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
+    gen_year_us <- getTableByYear(input$yearInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
   })
   
   #energy source input check box
@@ -463,22 +512,24 @@ function(input, output, session) {
         updateCheckboxGroupInput(session,"energySourceInput_us", selected=c(input$energySourceInput_us, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
       }
     }
-    
+    print("is inverse?")
+    print(input$isInverse)
+    print(input$slider_l)
+    print(input$slider_r)
     
     gen_year_us <- getTableByYear(input$yearInput_us)
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
-    print("hi")
     if(input$isInverse) {
       leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      print(leftHandSide)
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+      print(slice_gen_us)
       slice_gen_us <- rbind(slice_gen_us, leftHandSide)
-      print("hi2")
     }
     else {
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
       slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
-      print("hi3")
     }
     
     
@@ -495,9 +546,9 @@ function(input, output, session) {
     slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
     
     if(input$isInverse) {
-      print("hi")
-      slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_l*1000)
+      leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_r*1000)
+      slice_gen_us <- rbind(slice_gen_us, leftHandSide)
     }
     else {
       slice_gen_us <- subset(slice_gen_us, GEN >= input$slider_l*1000)
@@ -510,6 +561,82 @@ function(input, output, session) {
       gen_us
     })
   })
+  
+  
+  #################### page 4 #########################
+  observeEvent(input$yearInput_in, {  
+    
+  })
+  
+  observe({
+    if("All Plants" %in% input$sourceInput_in)  {
+      updateCheckboxGroupInput(session,"sourceInput_in", selected = source_idle_new)
+    }
+    
+    if(input$yearInput_in == "2010") {
+      gen_year_exist <- old_2010
+      gen_year_idle <- idle_2010
+      gen_year_new <- new_2010
+    }
+    else {
+      gen_year_exist <- old_2018
+      gen_year_idle <- idle_2018
+      gen_year_new <- new_2018
+    }
+    
+    gen_idle_new_map <- leaflet() %>% 
+      addProviderTiles(
+        providers$CartoDB.Positron, group = "Light"
+      ) %>%
+      setView(
+        lng = subset(state_location, state == "US")$longtitude, 
+        lat = subset(state_location, state == "US")$latitude,
+        zoom = subset(state_location, state == "US")$zoom
+      )
+
+    if("All Plants" %in% input$sourceInput_in) {
+      gen_idle_new_map <- gen_idle_new_map %>% addCircleMarkers(
+        data = gen_year_exist,
+        lat = ~PLANT_LAT,
+        lng = ~PLANT_LONG, 
+        radius = 2,
+        color = "blue",
+        stroke = FALSE, fillOpacity = 0.4
+      )
+    }
+    if("New Plants" %in% input$sourceInput_in) {
+      gen_idle_new_map <- gen_idle_new_map %>% addCircleMarkers(
+        data = gen_year_new,
+        lat = ~PLANT_LAT,
+        lng = ~PLANT_LONG, 
+        radius = 2,
+        color = "red",
+        stroke = FALSE, fillOpacity = 0.4
+      )
+    }
+    if("Idle Plants" %in% input$sourceInput_in) {
+      gen_idle_new_map <- gen_idle_new_map %>% addCircleMarkers(
+        data = gen_year_idle,
+        lat = ~PLANT_LAT,
+        lng = ~PLANT_LONG, 
+        radius = 2,
+        color = "black",
+        stroke = FALSE, fillOpacity = 0.4
+      )
+    }
+    
+    gen_idle_new_map <- gen_idle_new_map %>%
+      addLegend("bottomright", colors= c("blue", "red","black"), 
+                labels=c("have existed", "new plants", "idle plants"), title="Plants") %>%
+      addLayersControl(
+        options = layersControlOptions(collapsed = FALSE)
+      )
+    
+    output$leaf_in <- renderLeaflet({
+      gen_idle_new_map
+    })
+  })
+  
   
   #################### generate graph ####################
   getLeafletMap <- function(slice_gen, stateInput) {

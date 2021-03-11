@@ -287,7 +287,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                                         tags$span("Idle & New Plants")
                                                     )
                                                 ),
-                                                column(10,
+                                                column(2,
                                                     tags$div(
                                                         tags$div(class = "filter cust-text",
                                                             selectizeInput(
@@ -296,7 +296,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                                         )
                                                     )
                                                 ),
-                                                column(10)
+                                                column(10, tags$div())
                                             ),
                                             fluidRow(style = "margin: 2px",
                                                 column(2, style = "background-color: white",
@@ -308,7 +308,7 @@ ui <- fluidPage(class = "p-0 m-0",
 
                                                         #Energy source filter start
                                                         tags$div(class = "filter",
-                                                            checkboxGroupInput("sourceInput_in", "Energy source: ", choices = c(energySource_dist))
+                                                            checkboxGroupInput("sourceInput_in", "Energy source: ", choices = c(source_idle_new))
                                                         ) #energy source filter end
                                                     )
                                                 ),
@@ -320,9 +320,9 @@ ui <- fluidPage(class = "p-0 m-0",
                                                                     "Map:"
                                                             ),
                                                             tags$div(style = "height: 680px",
-                                                                #shinycssloaders::withSpinner(
-                                                                #    leafletOutput("leaf", height = 630),
-                                                                #)
+                                                                shinycssloaders::withSpinner(
+                                                                    leafletOutput("leaf_in", height = 630),
+                                                                )
                                                             )
                                                         )
                                                     )

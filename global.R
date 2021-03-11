@@ -293,6 +293,7 @@ year_dist <- c("2000", "2010", "2018")
 state_dist <- state.name
 map_dist <- c("Light", "Dark", "Terrain")
 
+source_idle_new <- c("All Plants", "New Plants", "Idle Plants")
 
 ####################### state location ########################
 state_location <- data.frame (state  = c("US", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA","MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"),
