@@ -288,7 +288,7 @@ idle_2010 <- subset(gen_2000, !(ORIS_CODE %in% gen_2010$ORIS_CODE))
 
 
 ######################## input list ##########################
-energySource_dist <- c("Select All", "Select Renewable", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown")
+energySource_dist <- c("Select All", "Select Renewable", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other")
 year_dist <- c("2000", "2010", "2018")
 state_dist <- state.name
 map_dist <- c("Light", "Dark", "Terrain")

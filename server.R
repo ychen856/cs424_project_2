@@ -38,109 +38,24 @@ function(input, output, session) {
     
     slice_gen_2018_IL <- getMapTable(gen_2018, "IL", input$energySourceInput)
 
-    quakeIcons <- iconList(coal = makeIcon("map-pin-solid-coal.svg", iconWidth = 12, iconHeight =24),
-                           oil = makeIcon("map-pin-solid-oil.svg", iconWidth = 12, iconHeight =24),
-                           gas = makeIcon("map-pin-solid-gas.svg", iconWidth = 12, iconHeight =24),
-                           nuclear = makeIcon("map-pin-solid-nuclear.svg", iconWidth = 12, iconHeight =24),
-                           hydro = makeIcon("map-pin-solid-hydro.svg", iconWidth = 12, iconHeight =24),
-                           biomass = makeIcon("map-pin-solid-biomass.svg", iconWidth = 12, iconHeight =24),
-                           wind = makeIcon("map-pin-solid-wind.svg", iconWidth = 12, iconHeight =24),
-                           solar = makeIcon("map-pin-solid-solar.svg", iconWidth = 12, iconHeight =24),
-                           geothermal = makeIcon("map-pin-solid-geothermal.svg", iconWidth = 12, iconHeight =24),
-                           other = makeIcon("map-pin-solid-other.svg", iconWidth = 12, iconHeight =24),
-                           unknown = makeIcon("map-pin-solid-unknown.svg", iconWidth = 12, iconHeight =24)
-                           )
+    gen_2018_IL_map <- getLeafletMap_icon(slice_gen_2018_IL)
     
-    gen_2018_IL_map <- leaflet() %>% 
-      addProviderTiles(
-        providers$CartoDB.Positron, group = "Light"
-      ) %>%
-      addProviderTiles(
-        providers$CartoDB.DarkMatter, group = "Dark"
-      ) %>%
-      addProviderTiles(
-        providers$Esri.WorldTopoMap, group = "Terrain"
-      ) %>%
-      setView(
-        lng = -89, 
-        lat = 40, 
-        zoom = 7
-      ) %>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Coal"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG, 
-                 icon = quakeIcons["coal"]
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Oil"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG,
-                 icon = quakeIcons["oil"]
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Gas"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG, 
-                 icon = quakeIcons["gas"]
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Nuclear"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG, 
-                 icon = quakeIcons["nuclear"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Hydro"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG, 
-                 icon = quakeIcons["hydro"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Biomass"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG,
-                 icon = quakeIcons["biomass"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Wind"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG,
-                 icon = quakeIcons["wind"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Solar"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG, 
-                 icon = quakeIcons["solar"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Geothermal"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG,
-                 icon = quakeIcons["geothermal"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Other"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG,
-                 icon = quakeIcons["other"],
-                 #popup = ~PointUse
-      )%>%
-      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Unknown"),
-                 lat = ~U_PLANT_LAT,
-                 lng = ~U_PLANT_LONG,
-                 icon = quakeIcons["unknown"],
-                 #popup = ~PointUse
-      )%>%
-      addLegend("bottomright", colors= c("#e6194B", "#f58231","#808000" ,"#800000", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9"), 
-              labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), title="Energy Source") %>%
-      addLayersControl(
-                baseGroups = c("Light", "Dark", "Terrain"),
-                options = layersControlOptions(collapsed = FALSE)
-      )
-    
-      output$leaf <- renderLeaflet({
-        gen_2018_IL_map
-      })
+    output$leaf <- renderLeaflet({
+      gen_2018_IL_map
+    })
   })
 
+  
+  #reset button first
+  observeEvent(input$reset, {
+    slice_gen_2018_IL <- getMapTable(gen_2018, "IL", input$energySourceInput)
+    
+    gen_2018_IL_map <- getLeafletMap_icon(slice_gen_2018_IL)
+    
+    output$leaf <- renderLeaflet({
+      gen_2018_IL_map
+    })
+  })
 
   ################## Page 2 ####################
   #first graph year input
@@ -364,6 +279,12 @@ function(input, output, session) {
 
 
   ###################### Page 3 ##########################
+  #state input
+  observeEvent(input$stateInput_us, {  
+    gen_year_us <- getTableByYear(input$yearInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]), input$energySourceInput_us)
+  })
+  
   #inverse button
   observeEvent(input$isInverse, {
     if(input$isInverse) {
@@ -404,7 +325,7 @@ function(input, output, session) {
   gen_year_second <- NULL
   observeEvent(input$slider_l, {  
     gen_year_us <- getTableByYear(input$yearInput_us)
-    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]), input$energySourceInput_us)
     
     if(input$isInverse) {
       if(input$slider_r < input$slider_l)
@@ -428,6 +349,7 @@ function(input, output, session) {
         updateValue_r <- input$slider_l
       else
         updateValue_r <- input$slider_r
+      
       output$slider_right <- renderUI({
         tags$div(class = "cust-text",
                  sliderInput("slider_r", "Generation Range (kMWh):",
@@ -440,7 +362,7 @@ function(input, output, session) {
     }
     
     
-    gen_us <- getLeafletMap(slice_gen_us, "US")
+    gen_us <- getLeafletMap(slice_gen_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]))
     
     output$leaf_us <- renderLeaflet({
       gen_us
@@ -450,7 +372,7 @@ function(input, output, session) {
   #right slider input
   observeEvent(input$slider_r, {  
     gen_year_us <- getTableByYear(input$yearInput_us)
-    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]), input$energySourceInput_us)
     
     if(input$isInverse) {
       if(input$slider_r < input$slider_l)
@@ -487,7 +409,7 @@ function(input, output, session) {
     }
     
     
-    gen_us <- getLeafletMap(slice_gen_us, "US")
+    gen_us <- getLeafletMap(slice_gen_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]))
     
     output$leaf_us <- renderLeaflet({
       gen_us
@@ -496,7 +418,7 @@ function(input, output, session) {
   
   observeEvent(input$yearInput_us, {  
     gen_year_us <- getTableByYear(input$yearInput_us)
-    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]), input$energySourceInput_us)
   })
   
   #energy source input check box
@@ -514,7 +436,7 @@ function(input, output, session) {
     }
     
     gen_year_us <- getTableByYear(input$yearInput_us)
-    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]), input$energySourceInput_us)
     
     if(input$isInverse) {
       leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
@@ -527,7 +449,7 @@ function(input, output, session) {
     }
     
     
-    gen_us <- getLeafletMap(slice_gen_us, "US")
+    gen_us <- getLeafletMap(slice_gen_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]))
     
     output$leaf_us <- renderLeaflet({
       gen_us
@@ -537,7 +459,7 @@ function(input, output, session) {
   #reset button second
   observeEvent(input$reset_us, {
     gen_year_us <- getTableByYear(input$yearInput_us)
-    slice_gen_us <- getMapTable(gen_year_us, "US", input$energySourceInput_us)
+    slice_gen_us <- getMapTable(gen_year_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]), input$energySourceInput_us)
     
     if(input$isInverse) {
       leftHandSide <- subset(slice_gen_us, GEN <= input$slider_l*1000)
@@ -549,7 +471,7 @@ function(input, output, session) {
       slice_gen_us <- subset(slice_gen_us, GEN <= input$slider_r*1000)
     }
     
-    gen_us <- getLeafletMap(slice_gen_us, "US")
+    gen_us <- getLeafletMap(slice_gen_us, ifelse(input$stateInput_us == "All States", "US", state.abb[which(state.name == input$stateInput_us)]))
     
     output$leaf_us <- renderLeaflet({
       gen_us
@@ -596,6 +518,108 @@ function(input, output, session) {
   })
   
   #################### generate graph ####################
+  getLeafletMap_icon <- function(slice_gen_2018_IL) {
+    quakeIcons <- iconList(coal = makeIcon("map-marker-solid-coal.svg", iconWidth = 12, iconHeight =24),
+                           oil = makeIcon("map-marker-solid-oil.svg", iconWidth = 12, iconHeight =24),
+                           gas = makeIcon("map-marker-solid-gas.svg", iconWidth = 12, iconHeight =24),
+                           nuclear = makeIcon("map-marker-solid-nuclear.svg", iconWidth = 12, iconHeight =24),
+                           hydro = makeIcon("map-marker-solid-hydro.svg", iconWidth = 12, iconHeight =24),
+                           biomass = makeIcon("map-marker-solid-biomass.svg", iconWidth = 12, iconHeight =24),
+                           wind = makeIcon("map-marker-solid-wind.svg", iconWidth = 12, iconHeight =24),
+                           solar = makeIcon("map-marker-solid-solar.svg", iconWidth = 12, iconHeight =24),
+                           geothermal = makeIcon("map-marker-solid-geothermal.svg", iconWidth = 12, iconHeight =24),
+                           other = makeIcon("map-marker-solid-other.svg", iconWidth = 12, iconHeight =24),
+                           unknown = makeIcon("map-marker-solid-unknown.svg", iconWidth = 12, iconHeight =24)
+    )
+    
+    gen_2018_IL_map <- leaflet() %>% 
+      addProviderTiles(
+        providers$CartoDB.Positron, group = "Light"
+      ) %>%
+      addProviderTiles(
+        providers$CartoDB.DarkMatter, group = "Dark"
+      ) %>%
+      addProviderTiles(
+        providers$Esri.WorldTopoMap, group = "Terrain"
+      ) %>%
+      setView(
+        lng = -89, 
+        lat = 40, 
+        zoom = 7
+      ) %>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Coal"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG, 
+                 icon = quakeIcons["coal"]
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Oil"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["oil"]
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Gas"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG, 
+                 icon = quakeIcons["gas"]
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Nuclear"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG, 
+                 icon = quakeIcons["nuclear"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Hydro"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG, 
+                 icon = quakeIcons["hydro"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Biomass"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["biomass"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Wind"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["wind"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Solar"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG, 
+                 icon = quakeIcons["solar"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Geothermal"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["geothermal"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Other"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["other"],
+                 #popup = ~PointUse
+      )%>%
+      addMarkers(data = subset(slice_gen_2018_IL, SOURCE == "Unknown"),
+                 lat = ~U_PLANT_LAT,
+                 lng = ~U_PLANT_LONG,
+                 icon = quakeIcons["unknown"],
+                 #popup = ~PointUse
+      )%>%
+      addLegend("bottomright", colors= c("#004949","#009292","#ff6db6", "#490092","#006ddb","#b66dff", "#920000","#924900","#db6d00","#ffff6d", "#a9a9a9"), 
+                labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), title="Energy Source") %>%
+      addLayersControl(
+        baseGroups = c("Light", "Dark", "Terrain"),
+        options = layersControlOptions(collapsed = FALSE)
+      )
+    return (gen_2018_IL_map)
+  }
+  
+  
   getLeafletMap <- function(slice_gen, stateInput) {
     leaflet() %>% 
       addProviderTiles(
@@ -619,7 +643,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.4, 
-        color = "#e6194B", 
+        color = "#004949", 
         popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Coal")$ORIS_CODE, "<br>",
                     "Plant Name: ", subset(slice_gen, SOURCE == "Coal")$PLANT_NAME, "<br>",
                     "Coal Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Coal")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -633,7 +657,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.4, 
-        color = "#f58231", 
+        color = "#009292", 
         popup=paste("ORIS Code: ", subset(slice_gen, SOURCE == "Oil")$ORIS_CODE, "<br>",
                     "Plant Name: ", subset(slice_gen, SOURCE == "Oil")$PLANT_NAME, "<br>",
                     "Oil Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Oil")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -647,7 +671,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.4, 
-        color = "#808000", 
+        color = "#ff6db6", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Gas")$ORIS_CODE, "<br>",
                 "Plant Name: ", subset(slice_gen, SOURCE == "Gas")$PLANT_NAME, "<br>",
                 "Gas Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Gas")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -661,7 +685,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.2, 
-        color = "#800000", 
+        color = "#490092", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Nuclear")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Nuclear")$PLANT_NAME, "<br>",
                       "Nuclear Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Nuclear")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -675,7 +699,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
-        color = "#3cb44b", 
+        color = "#006ddb", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Hydro")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Hydro")$PLANT_NAME, "<br>",
                       "Hydro Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Hydro")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -689,7 +713,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
-        color = "#42d4f4", 
+        color = "#b66dff", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Biomass")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Biomass")$PLANT_NAME, "<br>",
                       "Biomass Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Biomass")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -703,7 +727,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
-        color = "#4363d8", 
+        color = "#920000", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Wind")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Wind")$PLANT_NAME, "<br>",
                       "Wind Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Wind")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -717,7 +741,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.5, 
-        color = "#911eb4", 
+        color = "#920000", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Solar")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Solar")$PLANT_NAME, "<br>",
                       "Solar Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Solar")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -731,7 +755,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
-        color = "#f032e6", 
+        color = "#924900", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Geothermal")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Geothermal")$PLANT_NAME, "<br>",
                       "Geothermal Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Geothermal")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -745,7 +769,7 @@ function(input, output, session) {
         weight = 1,
         radius = ~sqrt(GEN/100)*150, 
         fillOpacity=0.3, 
-        color = "#a9a9a9", 
+        color = "#ffff6d", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Other")$ORIS_CODE, "<br>",
                               "Plant Name: ", subset(slice_gen, SOURCE == "Other")$PLANT_NAME, "<br>",
                               "Other Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Other")$GEN), format="f", digits=2, big.mark=","), "<br>",
@@ -763,11 +787,11 @@ function(input, output, session) {
         color = "#a9a9a9", 
         popup = paste("ORIS Code: ", subset(slice_gen, SOURCE == "Unknown")$ORIS_CODE, "<br>",
                       "Plant Name: ", subset(slice_gen, SOURCE == "Unknown")$PLANT_NAME, "<br>",
-                      "Unknown Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Unknown")$GEN), format="f", digits=2, big.mark=","), "<br>",
+                      "Generation Capacity: ", formatC(as.numeric(subset(slice_gen, SOURCE == "Unknown")$GEN), format="f", digits=2, big.mark=","), "<br>",
                       "Renewable Energy Source (%)", format(round(subset(slice_gen, SOURCE == "Unknown")$TOTAL_RENEWABLE_PER, 2), nsmall = 2), "<br>",
                       "Non-Renewable Energy Source (%)", format(round(subset(slice_gen, SOURCE == "Unknown")$TOTAL_NONRENEWABLE_PER, 2), nsmall = 2), "<br>")
       ) %>%
-      addLegend("bottomright", colors= c("#e6194B", "#f58231","#808000" ,"#800000", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#a9a9a9", "black"), 
+      addLegend("bottomright", colors= c("#004949","#009292","#ff6db6", "#490092", "#006ddb", "#b66dff", "#920000","#924900","#db6d00","#ffff6d", "#a9a9a9"), 
                 labels=c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), title="Energy Source") %>%
       addLayersControl(
         baseGroups = c("Light", "Dark", "Terrain"),

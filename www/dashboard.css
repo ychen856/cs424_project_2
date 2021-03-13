@@ -218,6 +218,11 @@
   margin-top: -21px !important;
 }
 
+.slider-right .irs-line{
+  background: #428bca ;
+  border: 1px solid #428bca ;
+}
+
 .slider-right .irs-line-mid{
   background: #428bca ;
   border: 1px solid #428bca ;

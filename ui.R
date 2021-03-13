@@ -60,7 +60,8 @@ ui <- fluidPage(class = "p-0 m-0",
                                                     #Energy source filter start
                                                     tags$div(class = "filter",
                                                         checkboxGroupInput("energySourceInput", "Energy source: ", choices = c(energySource_dist))
-                                                    ) #energy source filter end
+                                                    ), #energy source filter end
+                                                    actionButton("reset", "Reset view")
                                                 )
                                             ),
                                             column(10,
@@ -70,7 +71,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                                             tags$i(class = "fas fa-map-marked-alt"),
                                                                 "Map:"
                                                         ),
-                                                        tags$div(style = "height: 680px",
+                                                        tags$div(style = "height: 650px",
                                                             shinycssloaders::withSpinner(
                                                                 leafletOutput("leaf", height = 630),
                                                             )
@@ -130,7 +131,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                             actionButton("reset_com_first", "Reset view")
                                         ),
                                         column(9,
-                                            tags$div(style = "height: 680px",
+                                            tags$div(style = "height: 650px",
                                                 shinycssloaders::withSpinner(
                                                     leafletOutput("leaf_com_first", height = 630),
                                                 )
@@ -177,7 +178,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                             actionButton("reset_com_second", "Reset view")
                                         ),
                                         column(9,
-                                            tags$div(style = "height: 680px",
+                                            tags$div(style = "height: 650px",
                                                 shinycssloaders::withSpinner(
                                                     leafletOutput("leaf_com_second", height = 630),
                                                 )
@@ -199,7 +200,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                 #card Start
                                 tags$div(class = "card-body",
                                     tags$div(
-                                        column(3, class = "p-0",
+                                        column(2, class = "p-0",
                                             tags$div(
                                                 class = "title",
                                                 tags$span("Energy Plants in US")
@@ -214,14 +215,25 @@ ui <- fluidPage(class = "p-0 m-0",
                                                 )
                                             )
                                         ),
-                                        column(3, 
+                                        column(2,
                                             tags$div(
-                                                uiOutput("slider_left"),
+                                                tags$div(class = "filter, cust-text",
+                                                    selectizeInput(
+                                                        'stateInput_us', 'Select a state: ', choices = c("All States", state_dist), selected = "All States", multiple = FALSE
+                                                    )
+                                                )
                                             )
                                         ),
-                                        column(3, 
-                                            tags$div(
-                                                uiOutput("slider_right"),
+                                        column(5, 
+                                            column(6, 
+                                                tags$div(
+                                                    uiOutput("slider_left"),
+                                                )
+                                            ),
+                                            column(6, 
+                                                tags$div(
+                                                    uiOutput("slider_right"),
+                                                )
                                             )
                                         ),
                                         column(1, 
@@ -249,9 +261,9 @@ ui <- fluidPage(class = "p-0 m-0",
                                                 tags$i(class = "fas fa-map-marked-alt"),
                                                     "Map:"
                                                 ),
-                                                tags$div(style = "height: 680px",
+                                                tags$div(style = "height: 620px",
                                                     shinycssloaders::withSpinner(
-                                                        leafletOutput("leaf_us", height = 630),
+                                                        leafletOutput("leaf_us", height = 620),
                                                     )
                                                 )
                                             )
@@ -314,7 +326,7 @@ ui <- fluidPage(class = "p-0 m-0",
                                                             tags$i(class = "fas fa-map-marked-alt"),
                                                                 "Map:"
                                                         ),
-                                                        tags$div(style = "height: 680px",
+                                                        tags$div(style = "height: 630px",
                                                             shinycssloaders::withSpinner(
                                                                 leafletOutput("leaf_in", height = 630),
                                                             )

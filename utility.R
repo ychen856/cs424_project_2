@@ -7,7 +7,6 @@ getMapTable <- function(data, stateInput, energySourceInput) {
   else {
     gen_year_state <- subset(data, STATE == stateInput)
   }
-  
   slice_gen_year_state <- data.frame(matrix(ncol = 10, nrow = 0))
   slice_gen_year_state_col <- c("ORIS_CODE", "PLANT_NAME", "PLANT_LONG", "PLANT_LAT" , "GEN", "SOURCE", "U_PLANT_LONG", "U_PLANT_LONG", "TOTAL_RENEWABLE_PER", "TOTAL_NONRENEWABLE_PER")
   colnames(slice_gen_year_state) <- slice_gen_year_state_col
@@ -137,7 +136,7 @@ getMapTable <- function(data, stateInput, energySourceInput) {
     }
   }
   
-  if("Unknown" %in% energySourceInput) {
+  if("Select All" %in% energySourceInput) {
     unknown_plants_table <- gen_year_state[is.na(gen_year_state$COAL_GEN) 
                                                 & is.na(gen_year_state$OIL_GEN)
                                                 & is.na(gen_year_state$GAS_GEN)
