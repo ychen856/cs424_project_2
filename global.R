@@ -131,6 +131,9 @@ names(gen_2010)[33] <- c("TOTAL_RENEWABLE_PER")
 gen_2018$PLANT_LAT <- as.double(gen_2018$PLANT_LAT)
 gen_2018$PLANT_LONG <- as.double(gen_2018$PLANT_LONG)
 
+
+gen_2018 <- subset(gen_2018, !(is.na(PLANT_LAT)|is.na(PLANT_LONG)))
+
 gen_2018$COAL_GEN <- sub("^-", "^$", gen_2018$COAL_GEN)
 gen_2018$OIL_GEN <- sub("^-", "^$", gen_2018$OIL_GEN)
 gen_2018$GAS_GEN <- sub("^-", "^$", gen_2018$GAS_GEN)
@@ -183,6 +186,8 @@ gen_2018$OTHER_GEN <- ifelse(gen_2018$OTHER_GEN == 0, NA, gen_2018$OTHER_GEN)
 gen_2000$PLANT_LAT <- as.double(gen_2000$PLANT_LAT)
 gen_2000$PLANT_LONG <- as.double(gen_2000$PLANT_LONG)
 gen_2000$PLANT_LONG <- gen_2000$PLANT_LONG * -1
+
+gen_2000 <- subset(gen_2000, !(is.na(PLANT_LAT)|is.na(PLANT_LONG)))
 
 gen_2000$COAL_GEN <- sub("^-", "^$", gen_2000$COAL_GEN)
 gen_2000$OIL_GEN <- sub("^-", "^$", gen_2000$OIL_GEN)
@@ -237,6 +242,9 @@ gen_2000$ORIS_CODE = substr(gen_2000$ORIS_CODE,1,nchar(gen_2000$ORIS_CODE)-2)
 #2010
 gen_2010$PLANT_LAT <- as.double(gen_2010$PLANT_LAT)
 gen_2010$PLANT_LONG <- as.double(gen_2010$PLANT_LONG)
+
+
+gen_2010 <- subset(gen_2010, !(is.na(PLANT_LAT)|is.na(PLANT_LONG)))
 
 gen_2010$COAL_GEN <- as.numeric(gsub(",", "", gen_2010$COAL_GEN))
 gen_2010$OIL_GEN <- as.numeric(gsub(",", "", gen_2010$OIL_GEN))

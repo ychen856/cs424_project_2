@@ -190,15 +190,23 @@ function(input, output, session) {
   
   #reset button first
   observeEvent(input$reset_com_first, {
-    gen_year_first <- getTableByYear(input$yearInput_first)
-    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first_unsync)
+    if(input$isSync) {
+      gen_year_first <- getTableByYear(input$yearInput_first)
+      slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first)
     
-    gen_com_first_map <- getLeafletMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
+      gen_com_first_map <- getLeafletMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
+    }
+    else{
+      gen_year_first <- getTableByYear(input$yearInput_first)
+      slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first_unsync)
     
+      gen_com_first_map <- getLeafletMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
+    }
     #render map output
     output$leaf_com_first <- renderLeaflet({
       gen_com_first_map
     })
+    
   })
   
   
@@ -266,11 +274,18 @@ function(input, output, session) {
   
   #reset button second
   observeEvent(input$reset_com_second, {
-    gen_year_second <- getTableByYear(input$yearInput_second)
-    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second_unsync)
+    if(input$isSync){ 
+      gen_year_second <- getTableByYear(input$yearInput_second)
+      slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
     
-    gen_com_second_map <- getLeafletMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
+      gen_com_second_map <- getLeafletMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
+    }
+    else {
+      gen_year_second <- getTableByYear(input$yearInput_second)
+      slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second_unsync)
     
+      gen_com_second_map <- getLeafletMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
+    }
     output$leaf_com_second <- renderLeaflet({
       gen_com_second_map
     })
