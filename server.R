@@ -28,10 +28,13 @@ function(input, output, session) {
       updateCheckboxGroupInput(session,"energySourceInput", selected=c("Select All", energySource_dist))
     }
     else{ 
-      if("Select Renewable" %in% input$energySourceInput) {
+      if("Select Renewable" %in% input$energySourceInput && "Select nonRenewable" %in% input$energySourceInput) {
+        updateCheckboxGroupInput(session,"energySourceInput", selected=c(input$energySourceInput, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+      }
+      else if("Select Renewable" %in% input$energySourceInput) {
         updateCheckboxGroupInput(session,"energySourceInput", selected=c(input$energySourceInput, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
       }
-      if("Select nonRenewable" %in% input$energySourceInput) {
+      else if("Select nonRenewable" %in% input$energySourceInput) {
         updateCheckboxGroupInput(session,"energySourceInput", selected=c(input$energySourceInput, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
       }
     }
@@ -79,14 +82,14 @@ function(input, output, session) {
         #Energy source filter start
         tags$div(class = "filter",
                checkboxGroupInput("energySourceInput_first_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
-               checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
+               checkboxGroupInput("energySourceInput_first", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
         ) #energy source filter end
       })
       output$checkbox_second <- renderUI({
         #Energy source filter start
         tags$div(class = "filter",
                  checkboxGroupInput("energySourceInput_second_adm", "Energy source: ", choices = c("Select All", "Select Renewable", "Select nonRenewable")),
-                 checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
+                 checkboxGroupInput("energySourceInput_second", "", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
         ) #energy source filter end
       })
     }
@@ -115,26 +118,26 @@ function(input, output, session) {
     if("Select All" %in% input$energySourceInput_first_adm) {
       updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select All", "Select Renewable", "Select nonRenewable"))
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select All", "Select Renewable", "Select nonRenewable"))
-      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
-      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"))
+      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
     }
     else if("Select Renewable" %in% input$energySourceInput_first_adm && "Select nonRenewable" %in% input$energySourceInput_first_adm) {
       updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable", "Select nonRenewable"))
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable", "Select nonRenewable"))
-      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
-      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+      updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
+      updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"))
     }
     else if("Select Renewable" %in% input$energySourceInput_first_adm) {
         updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable"))
         updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select Renewable"))
-        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
-        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
     }
     else if("Select nonRenewable" %in% input$energySourceInput_first_adm) {
         updateCheckboxGroupInput(session, "energySourceInput_first_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select nonRenewable"))
         updateCheckboxGroupInput(session, "energySourceInput_second_adm", choices = c("Select All", "Select Renewable", "Select nonRenewable"), selected = c("Select nonRenewable"))
-        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
-        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
+        updateCheckboxGroupInput(session, "energySourceInput_first", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
+        updateCheckboxGroupInput(session, "energySourceInput_second", choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"), selected = c(temp, "Coal", "Oil", "Gas", "Nuclear", "Other"))
     }
     else {
       updateCheckboxGroupInput(session, "energySourceInput_second_adm", 
@@ -149,7 +152,7 @@ function(input, output, session) {
     if(length(input$energySourceInput_first_adm == 3)) {}
     else {
     updateCheckboxGroupInput(session, "energySourceInput_second", 
-                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"),
+                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
                              selected = input$energySourceInput_first)
     } 
     
@@ -168,13 +171,14 @@ function(input, output, session) {
     if("Select All" %in% input$energySourceInput_first_unsync)  {
       updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c("Select All", energySource_dist))
     }
-    else{ 
-      if("Select Renewable" %in% input$energySourceInput_first_unsync) {
+    else if("Select Renewable" %in% input$energySourceInput_first_unsync && "Select nonRenewable" %in% input$energySourceInput_first_unsync){
+      updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c(input$energySourceInput_first_unsync, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+    }
+    else if("Select Renewable" %in% input$energySourceInput_first_unsync) {
         updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c(input$energySourceInput_first_unsync, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
-      }
-      if("Select nonRenewable" %in% input$energySourceInput_first_unsync) {
+    }
+    else if("Select nonRenewable" %in% input$energySourceInput_first_unsync) {
         updateCheckboxGroupInput(session,"energySourceInput_first_unsync", selected=c(input$energySourceInput_first_unsync, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
-      }
     }
     
     gen_year_first <- getTableByYear(input$yearInput_first)
@@ -233,7 +237,7 @@ function(input, output, session) {
   
   observe({
     updateCheckboxGroupInput(session, "energySourceInput_first", 
-                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other", "Unknown"),
+                             choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
                              selected = input$energySourceInput_second)
     
     gen_year_second <- getTableByYear(input$yearInput_second)
@@ -441,13 +445,14 @@ function(input, output, session) {
     if("Select All" %in% input$energySourceInput_us)  {
       updateCheckboxGroupInput(session,"energySourceInput_us", selected=c("Select All", energySource_dist))
     }
-    else{ 
-      if("Select Renewable" %in% input$energySourceInput_us) {
-        updateCheckboxGroupInput(session,"energySourceInput_us", selected=c(input$energySourceInput_us, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
-      }
-      if("Select nonRenewable" %in% input$energySourceInput_us) {
+    else if ("Select Renewable" %in% input$energySourceInput_us && "Select nonRenewable" %in% input$energySourceInput_us){ 
+      updateCheckboxGroupInput(session,"energySourceInput_us", selected=c(input$energySourceInput_us, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+    }
+    else if("Select Renewable" %in% input$energySourceInput_us) {
+      updateCheckboxGroupInput(session,"energySourceInput_us", selected=c(input$energySourceInput_us, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+    }
+    else if("Select nonRenewable" %in% input$energySourceInput_us) {
         updateCheckboxGroupInput(session,"energySourceInput_us", selected=c(input$energySourceInput_us, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
-      }
     }
     
     gen_year_us <- getTableByYear(input$yearInput_us)
@@ -503,13 +508,14 @@ function(input, output, session) {
     if("Select All" %in% input$energySourceInput_in)  {
       updateCheckboxGroupInput(session,"energySourceInput_in", selected=c("Select All", energySource_dist))
     }
-    else{ 
-      if("Select Renewable" %in% input$energySourceInput_in) {
-        updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
-      }
-      if("Select nonRenewable" %in% input$energySourceInput_in) {
-        updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
-      }
+    else if("Select Renewable" %in% input$energySourceInput_in && "Select nonRenewable" %in% input$energySourceInput_in){ 
+      updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
+    }
+    else if("Select Renewable" %in% input$energySourceInput_in) {
+      updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select Renewable", "Hydro", "Biomass", "Wind", "Solar", "Geothermal"))
+    }
+    else if("Select nonRenewable" %in% input$energySourceInput_in) {
+      updateCheckboxGroupInput(session,"energySourceInput_in", selected=c(input$energySourceInput_in, "Select nonRenewable", "Coal", "Oil", "Gas", "Nuclear", "Other"))
     }
     
     slice_gen_in <- getSliceIdleNewTable(input$yearInput_in, input$sourceInput_in, input$energySourceInput_in)
