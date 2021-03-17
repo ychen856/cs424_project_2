@@ -157,7 +157,7 @@ function(input, output, session) {
     } 
     
     gen_year_first <- getTableByYear(input$yearInput_first)
-    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first)
+    slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], c(input$energySourceInput_first, input$energySourceInput_first_adm))
 
       gen_com_first_map <- getLeafletMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
 
@@ -196,7 +196,7 @@ function(input, output, session) {
   observeEvent(input$reset_com_first, {
     if(input$isSync) {
       gen_year_first <- getTableByYear(input$yearInput_first)
-      slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], input$energySourceInput_first)
+      slice_gen_com_first <- getMapTable(gen_year_first, state.abb[which(state.name == input$stateInput_first)], c(input$energySourceInput_first, input$energySourceInput_first_adm))
     
       gen_com_first_map <- getLeafletMap(slice_gen_com_first, state.abb[which(state.name == input$stateInput_first)])
     }
@@ -240,8 +240,9 @@ function(input, output, session) {
                              choices = c("Coal", "Oil", "Gas", "Nuclear", "Hydro", "Biomass", "Wind", "Solar", "Geothermal", "Other"),
                              selected = input$energySourceInput_second)
     
+    
     gen_year_second <- getTableByYear(input$yearInput_second)
-    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
+    slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], c(input$energySourceInput_second, input$energySourceInput_second_adm))
     
     gen_com_second_map <- getLeafletMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
     
@@ -280,7 +281,7 @@ function(input, output, session) {
   observeEvent(input$reset_com_second, {
     if(input$isSync){ 
       gen_year_second <- getTableByYear(input$yearInput_second)
-      slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], input$energySourceInput_second)
+      slice_gen_com_second <- getMapTable(gen_year_second, state.abb[which(state.name == input$stateInput_second)], c(input$energySourceInput_second, input$energySourceInput_second_adm))
     
       gen_com_second_map <- getLeafletMap(slice_gen_com_second, state.abb[which(state.name == input$stateInput_second)])
     }
